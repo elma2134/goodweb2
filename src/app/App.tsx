@@ -113,6 +113,7 @@ const [activeMenu, setActiveMenu] = useState('booking');
   }
 
  const handleSubmit = async (e: React.FormEvent) => {
+
   e.preventDefault();
 
   try {
@@ -121,11 +122,8 @@ const [activeMenu, setActiveMenu] = useState('booking');
       'https://script.google.com/macros/s/AKfycbyPdA4wR-xhgIuDeRdogGhMw38lqrNLrIwpABLnEHD6n6MUcEOORfbnbzfQPF7YOiZ-/exec',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
 
-        body: JSON.stringify({
+        body: new URLSearchParams({
           action: 'createBooking',
 
           ownerName: formData.ownerName,
@@ -162,7 +160,7 @@ const [activeMenu, setActiveMenu] = useState('booking');
 
     } else {
 
-      alert('ไม่สามารถจองได้');
+      alert(data.error || 'ไม่สามารถจองได้');
 
     }
 
