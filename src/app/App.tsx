@@ -117,7 +117,7 @@ const [activeMenu, setActiveMenu] = useState('booking');
 
   try {
     await fetch(
-      'https://script.google.com/macros/s/AKfycbylTNqayvJz_pXdaGrO4khfzGjms3zk8AVItYQMZP7iJPQaLgMeRd6V5TIplkg-ajC5/exec',
+      'https://script.google.com/macros/s/AKfycbyPdA4wR-xhgIuDeRdogGhMw38lqrNLrIwpABLnEHD6n6MUcEOORfbnbzfQPF7YOiZ-/exec',
       {
         method: 'POST',
         headers: {
