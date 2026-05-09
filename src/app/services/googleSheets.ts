@@ -9,19 +9,22 @@ export interface BookingData {
   status?: string;
 }
 
-// ใส่ Google Apps Script Web App URL ของคุณที่นี่
-const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+// ใส่ Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbyPdA4wR-xhgIuDeRdogGhMw38lqrNLrIwpABLnEHD6n6MUcEOORfbnbzfQPF7YOiZ-/exec';
 
 export class GoogleSheetsService {
   private scriptUrl: string;
 
-  constructor(scriptUrl: string = GOOGLE_SCRIPT_URL) {https://script.google.com/macros/s/AKfycbyPdA4wR-xhgIuDeRdogGhMw38lqrNLrIwpABLnEHD6n6MUcEOORfbnbzfQPF7YOiZ-/exec
+  constructor(scriptUrl: string = GOOGLE_SCRIPT_URL) {
     this.scriptUrl = scriptUrl;
   }
 
   async getBookings(): Promise<BookingData[]> {
     try {
-      const response = await fetch(`${this.scriptUrl}?action=getBookings`);
+      const response = await fetch(
+        `${this.scriptUrl}?action=getBookings`
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch bookings');
@@ -31,11 +34,14 @@ export class GoogleSheetsService {
       return data.bookings || [];
     } catch (error) {
       console.error('Error fetching bookings:', error);
-      throw error;
+      return [];
     }
   }
 
-  async updateBookingStatus(id: string, status: string): Promise<boolean> {
+  async updateBookingStatus(
+    id: string,
+    status: string
+  ): Promise<boolean> {
     try {
       const response = await fetch(this.scriptUrl, {
         method: 'POST',
@@ -49,15 +55,11 @@ export class GoogleSheetsService {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update booking status');
-      }
-
       const data = await response.json();
       return data.success || false;
     } catch (error) {
-      console.error('Error updating booking status:', error);
-      throw error;
+      console.error(error);
+      return false;
     }
   }
 
@@ -74,17 +76,14 @@ export class GoogleSheetsService {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete booking');
-      }
-
       const data = await response.json();
       return data.success || false;
     } catch (error) {
-      console.error('Error deleting booking:', error);
-      throw error;
+      console.error(error);
+      return false;
     }
   }
 }
 
-export const googleSheetsService = new GoogleSheetsService();
+export const googleSheetsService =
+  new GoogleSheetsService();
