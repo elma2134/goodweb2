@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { LogIn } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: (username: string) => void;
@@ -9,82 +9,150 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  // AUTO LOGIN SESSION
+  useEffect(() => {
+    const savedUser = localStorage.getItem('admin-auth');
+
+    if (savedUser) {
+      onLogin(savedUser);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
-      setError('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
-      return;
-    }
+    // PRIVATE LOGIN
+    const ADMIN_USER = 'admin';
+    const ADMIN_PASS = '231031';
 
-    // Mock login - ในระบบจริงจะเชื่อม Supabase Auth
-    if (password.length >= 6) {
+    if (
+      username === ADMIN_USER &&
+      password === ADMIN_PASS
+    ) {
+      localStorage.setItem('admin-auth', username);
       onLogin(username);
     } else {
-      setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+      setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
     }
   };
 
   return (
-    <div className="size-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mb-4">
-            <LogIn className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900">ระบบจองคิว</h1>
-          <p className="text-gray-600 mt-2">เข้าสู่ระบบเพื่อดู Dashboard</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden">
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              ชื่อผู้ใช้
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-              placeholder="กรอกชื่อผู้ใช้"
-            />
-          </div>
+      {/* Background Blur */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-black to-blue-950 opacity-95"></div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              รหัสผ่าน
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-              placeholder="กรอกรหัสผ่าน"
-            />
-          </div>
+      <div className="relative z-10 w-full max-w-md px-6">
+        <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8">
 
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg mb-5">
+              <ShieldCheck className="w-10 h-10 text-white" />
             </div>
-          )}
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-medium"
-          >
-            เข้าสู่ระบบ
-          </button>
-        </form>
+            <h1 className="text-3xl font-bold text-white">
+              ADMIN PANEL
+            </h1>
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Demo:</strong> กรอกชื่อผู้ใช้อะไรก็ได้ และรหัสผ่านอย่างน้อย 6 ตัว
-          </p>
+            <p className="text-gray-300 mt-2 text-sm">
+              Secure Access Only
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* USERNAME */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-2">
+                Username
+              </label>
+
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="
+                  w-full px-4 py-3
+                  rounded-xl
+                  bg-white/5
+                  border border-white/10
+                  text-white
+                  placeholder-gray-500
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-indigo-500
+                "
+                placeholder="Enter username"
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-2">
+                Password
+              </label>
+
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="
+                    w-full px-4 py-3 pr-12
+                    rounded-xl
+                    bg-white/5
+                    border border-white/10
+                    text-white
+                    placeholder-gray-500
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-indigo-500
+                  "
+                  placeholder="Enter password"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-3 right-4 text-gray-400"
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* ERROR */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                <p className="text-red-400 text-sm">
+                  {error}
+                </p>
+              </div>
+            )}
+
+            {/* BUTTON */}
+            <button
+              type="submit"
+              className="
+                w-full py-3 rounded-xl
+                bg-indigo-600 hover:bg-indigo-700
+                transition-all duration-300
+                text-white font-semibold
+                flex items-center justify-center gap-2
+              "
+            >
+              <Lock size={18} />
+              Secure Login
+            </button>
+          </form>
         </div>
       </div>
     </div>
