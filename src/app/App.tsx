@@ -112,37 +112,64 @@ const [activeMenu, setActiveMenu] = useState('booking');
     );
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   try {
-    await fetch(
+
+    const response = await fetch(
       'https://script.google.com/macros/s/AKfycbyPdA4wR-xhgIuDeRdogGhMw38lqrNLrIwpABLnEHD6n6MUcEOORfbnbzfQPF7YOiZ-/exec',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+
+        body: JSON.stringify({
+          action: 'createBooking',
+
+          ownerName: formData.ownerName,
+          petName: formData.petName,
+          petType: formData.petType,
+          service: formData.service,
+
+          dateTime: `${formData.date} ${formData.time}`,
+
+          phone: formData.phone,
+        }),
       }
     );
 
-    setShowSuccess(true);
+    const data = await response.json();
 
-    setTimeout(() => setShowSuccess(false), 5000);
+    if (data.success) {
 
-    setFormData({
-      ownerName: '',
-      petName: '',
-      petType: '',
-      service: '',
-      date: '',
-      time: '',
-      phone: ''
-    });
+      setShowSuccess(true);
+
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+
+      setFormData({
+        ownerName: '',
+        petName: '',
+        petType: '',
+        service: '',
+        date: '',
+        time: '',
+        phone: '',
+      });
+
+    } else {
+
+      alert('ไม่สามารถจองได้');
+
+    }
 
   } catch (error) {
+
     console.error(error);
+
     alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
   }
 };
