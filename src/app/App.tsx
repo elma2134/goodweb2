@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Scissors, Sparkles, Heart, Calendar, Star, MapPin, Phone, MessageCircle, Clock, CheckCircle2, Shield } from 'lucide-react';
 import { Dashboard } from './components/Dashboard';
 import { LoginPage } from './components/LoginPage';
@@ -27,6 +28,49 @@ const [activeMenu, setActiveMenu] = useState('booking');
   { id: 'booking', label: 'จองคิว' },
 ];
   
+const [openFaq, setOpenFaq] = useState<number | null>(0);
+const faqs = [
+  {
+    question: 'ใช้เวลาตัดขนนานไหม?',
+    answer: 'ปกติประมาณ 1-3 ชั่วโมง ขึ้นอยู่กับขนาดตัวและสภาพขนของน้องค่ะ'
+  },
+  {
+    question: 'มีบริการรับ-ส่งไหม?',
+    answer: 'มีบริการรับส่งในพื้นที่ใกล้เคียง สามารถสอบถามเพิ่มเติมทาง LINE ได้เลย'
+  },
+  {
+    question: 'ใช้แชมพูอะไร?',
+    answer: 'เราใช้แชมพูออร์แกนิคและสูตรสำหรับสัตว์เลี้ยงโดยเฉพาะ ปลอดภัยต่อผิวหนัง'
+  },
+  {
+    question: 'แมวดุสามารถใช้บริการได้ไหม?',
+    answer: 'สามารถใช้บริการได้ โดยทีมงานมีประสบการณ์ดูแลสัตว์เลี้ยงที่เครียดหรือดุ'
+  }
+];
+const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+const faqs = [
+  {
+    question: 'ใช้เวลาตัดขนนานไหม?',
+    answer:
+      'ปกติประมาณ 1-3 ชั่วโมง ขึ้นอยู่กับขนาดตัวและสภาพขนของน้องค่ะ',
+  },
+  {
+    question: 'มีบริการรับ-ส่งไหม?',
+    answer:
+      'มีบริการรับส่งในพื้นที่ใกล้เคียง สามารถสอบถามเพิ่มเติมทาง LINE ได้เลย',
+  },
+  {
+    question: 'ใช้แชมพูอะไร?',
+    answer:
+      'เราใช้แชมพูออร์แกนิคและสูตรสำหรับสัตว์เลี้ยงโดยเฉพาะ ปลอดภัยต่อผิวหนัง',
+  },
+  {
+    question: 'แมวดุสามารถใช้บริการได้ไหม?',
+    answer:
+      'สามารถใช้บริการได้ โดยทีมงานมีประสบการณ์ดูแลสัตว์เลี้ยงที่เครียดหรือดุ',
+  },
+];
   const services = [
     {
       icon: <Sparkles className="w-8 h-8" />,
@@ -81,6 +125,27 @@ const [activeMenu, setActiveMenu] = useState('booking');
     }
   ];
 
+  useEffect(() => {
+  const handleScroll = () => {
+    const sections = menus.map((m) => m.id);
+
+    for (const section of sections) {
+      const el = document.getElementById(section);
+
+      if (el) {
+        const rect = el.getBoundingClientRect();
+
+        if (rect.top <= 120 && rect.bottom >= 120) {
+          setActiveMenu(section);
+        }
+      }
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
 
   const handleLogin = (username: string) => {
     setCurrentUser(username);
@@ -179,7 +244,21 @@ const scrollToSection = (id: string) => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/70 border-b border-white/20 backdrop-blur-xl backdrop-blur-sm shadow-sm z-50">
+      <nav className="
+fixed
+top-4
+left-1/2
+-translate-x-1/2
+w-[95%]
+max-w-7xl
+z-50
+bg-white/60
+backdrop-blur-2xl
+border
+border-white/30
+rounded-3xl
+shadow-[0_10px_60px_rgba(0,0,0,0.08)]
+">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2 text-2xl font-bold">
@@ -231,59 +310,225 @@ const scrollToSection = (id: string) => {
 </div>
 </nav>
 
-{/* Hero Section */}
-<section className="pt-16 min-h-screen relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#ffd6ec,transparent_30%),radial-gradient(circle_at_bottom_right,#dbeafe,transparent_30%),linear-gradient(to_bottom_right,#fff1f2,#faf5ff,#eff6ff)]"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                Happy
-                <span className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent"> Grooming spa Dog&Cat</span>
-              </h1>
-              <p className="text-xl text-gray-600">
-                บริการอาบน้ำ ตัดขน สปา สำหรับสุนัขและแมว ด้วยความใส่ใจและมาตรฐานระดับพรีเมียม
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={() => scrollToSection('booking')}
-                  className="bg-pink-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-pink-600 transition shadow-lg hover:shadow-xl"
-                >
-                  จองคิวเลย
-                </button>
-                <button
-                  onClick={() => scrollToSection('services')}
-                  className="bg-white text-pink-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-50 transition border-2 border-pink-500"
-                >
-                  ดูบริการ
-                </button>
+{/* HERO ULTRA PREMIUM */}
+<section className="relative min-h-screen overflow-hidden pt-16">
+
+  {/* Animated BG */}
+  <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-white to-blue-100" />
+
+  <div className="absolute top-[-200px] left-[-120px] w-[500px] h-[500px] bg-pink-300/30 rounded-full blur-3xl animate-pulse" />
+
+  <div className="absolute bottom-[-200px] right-[-120px] w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-3xl animate-pulse" />
+
+  {/* Grid */}
+  <div className="absolute inset-0 opacity-[0.03]">
+    <div className="h-full w-full bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:80px_80px]" />
+  </div>
+
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
+
+    <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+      {/* LEFT */}
+      <div>
+
+        {/* Badge */}
+        <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white/80 backdrop-blur-xl border border-pink-100 shadow-xl mb-8">
+
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-ping" />
+
+          <span className="font-semibold text-gray-700">
+            เปิดให้บริการทุกวัน 10:00 - 21:00
+          </span>
+        </div>
+
+        <h1 className="text-6xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-8">
+
+          HAPPY
+          <br />
+
+          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+            GROOMING
+          </span>
+
+        </h1>
+
+        <p className="text-xl text-gray-600 leading-relaxed max-w-xl mb-10">
+          บริการอาบน้ำ ตัดขน สปา และดูแลสุขภาพผิวหนัง
+          สำหรับสุนัขและแมวระดับพรีเมียม
+        </p>
+
+        {/* BUTTONS */}
+        <div className="flex flex-wrap gap-5 mb-14">
+
+          <button
+            onClick={() => scrollToSection('booking')}
+            className="
+              group
+              relative
+              overflow-hidden
+              px-9 py-5
+              rounded-2xl
+              bg-gradient-to-r from-pink-500 to-purple-600
+              text-white
+              font-bold
+              text-lg
+              shadow-2xl
+              transition-all
+              duration-300
+              hover:scale-105
+            "
+          >
+
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-all duration-300" />
+
+            <span className="relative">
+              จองคิวออนไลน์
+            </span>
+
+          </button>
+
+          <button
+            onClick={() => scrollToSection('services')}
+            className="
+              px-9 py-5
+              rounded-2xl
+              bg-white/70
+              backdrop-blur-xl
+              border border-white/50
+              text-gray-800
+              font-bold
+              text-lg
+              hover:bg-white
+              transition-all
+              duration-300
+              hover:scale-105
+            "
+          >
+            ดูบริการทั้งหมด
+          </button>
+
+        </div>
+
+        {/* STATS */}
+        <div className="grid grid-cols-3 gap-6">
+
+          {[
+            ['10K+', 'ลูกค้า'],
+            ['10+', 'ประสบการณ์'],
+            ['5.0', 'คะแนนรีวิว'],
+          ].map((item, i) => (
+
+            <div
+              key={i}
+              className="
+                bg-white/60
+                backdrop-blur-xl
+                border border-white/50
+                rounded-3xl
+                p-6
+                shadow-xl
+              "
+            >
+
+              <div className="text-4xl font-black text-pink-500 mb-2">
+                {item[0]}
               </div>
-              <div className="flex gap-8 pt-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-pink-500">10K+</div>
-                  <div className="text-gray-600">น้องๆที่ไว้วางใจ</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-pink-500">10+</div>
-                  <div className="text-gray-600">ปีของประสบการณ์</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-pink-500">5.0</div>
-                  <div className="text-gray-600">คะแนนรีวิว</div>
-                </div>
+
+              <div className="text-gray-600">
+                {item[1]}
               </div>
+
             </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 rounded-3xl transform rotate-6"></div>
-              <img
-                src="https://images.unsplash.com/photo-1733964659477-35534815c626?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxjdXRlJTIwZ3Jvb21lZCUyMGRvZyUyMGFmdGVyJTIwYmF0aHxlbnwxfHx8fDE3NzgxNTI1MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Happy groomed dog"
-                className="relative rounded-3xl shadow-2xl object-cover w-full h-[600px]"
-              />
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT */}
+      <div className="relative">
+
+        {/* Glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-blue-400 rounded-[50px] blur-3xl opacity-30 scale-110" />
+
+        {/* Floating Card */}
+        <div className="absolute -top-10 -left-10 z-20 bg-white/90 backdrop-blur-xl rounded-3xl p-5 shadow-2xl animate-bounce">
+
+          <div className="flex items-center gap-3">
+            <Heart className="text-pink-500 w-8 h-8" />
+
+            <div>
+              <div className="font-bold">
+                Premium Care
+              </div>
+
+              <div className="text-sm text-gray-500">
+                ดูแลเหมือนครอบครัว
+              </div>
             </div>
           </div>
         </div>
-      </section>
+
+<div className="
+absolute
+top-0
+right-0
+w-40
+h-40
+bg-pink-200
+blur-3xl
+opacity-30
+group-hover:scale-150
+transition-all
+duration-700
+"/>
+
+
+<div
+  className="
+    fixed
+    pointer-events-none
+    z-[999]
+    w-[400px]
+    h-[400px]
+    rounded-full
+    blur-3xl
+    opacity-20
+    bg-pink-400
+    transition-all
+    duration-300
+  "
+  style={{
+    left: mousePosition.x - 200,
+    top: mousePosition.y - 200,
+  }}
+/>
+import { motion } from 'framer-motion';
+const [openFaq, setOpenFaq] = useState<number | null>(null);
+        {/* IMAGE */}
+        <div className="relative group">
+
+          <div className="absolute inset-0 rounded-[50px] bg-gradient-to-r from-pink-500 to-blue-500 rotate-6 group-hover:rotate-3 transition-all duration-500" />
+
+          <img
+            src="https://images.unsplash.com/photo-1588112141571-959b20dbf541"
+            className="
+              relative
+              rounded-[50px]
+              w-full
+              h-[750px]
+              object-cover
+              shadow-2xl
+              transition-all
+              duration-700
+              group-hover:scale-[1.02]
+            "
+          />
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Services Section */}
       <section id="services" className="py-20 bg-white">
@@ -487,7 +732,79 @@ const scrollToSection = (id: string) => {
     }
   `}</style>
 </section>
+{/* FAQ */}
+<section className="py-24 bg-white relative overflow-hidden">
 
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#fce7f3,transparent_30%),radial-gradient(circle_at_bottom_left,#dbeafe,transparent_30%)]"></div>
+
+  <div className="relative max-w-4xl mx-auto px-4">
+
+    <div className="text-center mb-16">
+      <h2 className="text-5xl font-bold mb-4">
+        คำถามที่พบบ่อย
+      </h2>
+
+      <p className="text-xl text-gray-500">
+        รวมคำถามที่ลูกค้าสอบถามเข้ามาบ่อยที่สุด
+      </p>
+    </div>
+
+    <div className="space-y-5">
+
+      {faqs.map((faq, index) => (
+        <div
+          key={index}
+          className="glass rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-2xl"
+        >
+
+          <button
+            onClick={() =>
+              setOpenFaq(openFaq === index ? null : index)
+            }
+            className="w-full flex justify-between items-center p-7 text-left"
+          >
+
+            <span className="text-xl font-bold text-gray-800">
+              {faq.question}
+            </span>
+
+            <div
+              className={`
+                w-10 h-10 rounded-full
+                flex items-center justify-center
+                bg-pink-500 text-white
+                transition-transform duration-300
+                ${openFaq === index ? 'rotate-45' : ''}
+              `}
+            >
+              +
+            </div>
+
+          </button>
+
+          <div
+            className={`
+              grid transition-all duration-500 ease-in-out
+              ${
+                openFaq === index
+                  ? 'grid-rows-[1fr] opacity-100'
+                  : 'grid-rows-[0fr] opacity-0'
+              }
+            `}
+          >
+            <div className="overflow-hidden">
+              <div className="px-7 pb-7 text-gray-600 leading-relaxed">
+                {faq.answer}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
       {/* Testimonials Section */}
       <section id="testimonials" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
