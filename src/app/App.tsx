@@ -3,6 +3,18 @@ import { Scissors, Sparkles, Heart, Calendar, Star, MapPin, Phone, MessageCircle
 import { Dashboard } from './components/Dashboard';
 import { LoginPage } from './components/LoginPage';
 
+function BookingSuccessMessage() {
+  return (
+    <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 flex items-center gap-3">
+      <CheckCircle2 className="w-8 h-8 text-green-500" />
+      <div>
+        <div className="font-bold text-green-800">จองคิวสำเร็จ!</div>
+        <div className="text-green-700">เราจะติดต่อกลับเพื่อยืนยันนัดหมายในเร็วๆนี้ค่ะ</div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [formData, setFormData] = useState({
     ownerName: '',
@@ -16,9 +28,36 @@ export default function App() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState('');
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
   
 const [activeMenu, setActiveMenu] = useState('booking');
+
+// Sync activeMenu with scroll position
+import { useEffect, useRef } from 'react';
+
+const sectionIds = ['services', 'gallery', 'testimonials', 'booking'];
+const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+
+useEffect(() => {
+  const handleScroll = () => {
+    let current = sectionIds[0];
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      sectionRefs.current[id] = el;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 120) {
+          current = id;
+        }
+      }
+    }
+    setActiveMenu(current);
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
 
   const menus = [
   { id: 'services', label: 'บริการ' },
@@ -88,7 +127,7 @@ const [activeMenu, setActiveMenu] = useState('booking');
   };
 
   const handleLogout = () => {
-    setCurrentUser('');
+    setCurrentUser(null);
     setIsLoggedIn(false);
     setIsAdmin(false);
   };
@@ -98,7 +137,7 @@ const [activeMenu, setActiveMenu] = useState('booking');
       <div className="min-h-screen bg-slate-100">
         <button
           onClick={() => setIsAdmin(false)}
-          className="fixed top-4 left-4 z-50 bg-pink-500 hover:bg-pink-600 text-white px-5 py-3 rounded-full shadow-xl transition-all"
+          className="fixed top-4 left-4 z-50 bg-pink-500 text-white px-5 py-3 rounded-full shadow-xl transition-all duration-300 hover:bg-pink-600 hover:shadow-2xl hover:scale-105 active:scale-95"
         >
           ← กลับหน้าเว็บไซต์
         </button>
@@ -194,7 +233,7 @@ const scrollToSection = (id: string) => {
 
     {/* Animated Background */}
     <div
-      className="absolute top-2 bottom-2 rounded-full bg-gradient-to-r from-pink-500 to-pink-400 transition-all duration-300 ease-in-out shadow-md"
+      className="absolute top-2 bottom-2 rounded-full bg-gradient-to-r from-pink-500 to-pink-400 shadow-md"
       style={{
         width: '110px',
         left:
@@ -205,6 +244,7 @@ const scrollToSection = (id: string) => {
             : activeMenu === 'testimonials'
             ? '228px'
             : '338px',
+        transition: 'left 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
       }}
     />
 
@@ -215,10 +255,10 @@ const scrollToSection = (id: string) => {
           setActiveMenu(menu.id);
           scrollToSection(menu.id);
         }}
-        className={`relative z-10 w-[110px] py-3 rounded-full font-semibold transition-all duration-300 ${
+        className={`relative z-10 w-[110px] py-3 rounded-full font-semibold ${
           activeMenu === menu.id
             ? 'text-white'
-            : 'text-gray-700 hover:text-pink-500'
+            : 'text-gray-700 hover:text-pink-500 transition-colors duration-300'
         }`}
       >
         {menu.label}
@@ -247,13 +287,13 @@ const scrollToSection = (id: string) => {
               <div className="flex flex-wrap gap-4">
                 <button
                   onClick={() => scrollToSection('booking')}
-                  className="bg-pink-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-pink-600 transition shadow-lg hover:shadow-xl"
+                  className="bg-pink-500 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:bg-pink-600 hover:shadow-xl shadow-lg hover:scale-105 active:scale-95"
                 >
                   จองคิวเลย
                 </button>
                 <button
                   onClick={() => scrollToSection('services')}
-                  className="bg-white text-pink-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-50 transition border-2 border-pink-500"
+                  className="bg-white text-pink-500 px-8 py-4 rounded-full text-lg font-semibold border-2 border-pink-500 transition-all duration-300 hover:bg-gray-50 hover:shadow-lg hover:scale-105"
                 >
                   ดูบริการ
                 </button>
@@ -294,7 +334,7 @@ const scrollToSection = (id: string) => {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2 hover:rotate-1 duration-300">
+              <div key={index} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-2 hover:rotate-1">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 text-pink-500">
                   {service.icon}
                 </div>
@@ -442,39 +482,8 @@ const scrollToSection = (id: string) => {
         {/* Content */}
         <div className="flex-1 overflow-hidden rounded-[28px] bg-black">
 
-          <iframe
-            src="https://www.tiktok.com/embed/@happygroomingspacatdog"
-            className="w-full h-full"
-            allowFullScreen
-          />
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  {/* Responsive */}
-  <style jsx>{`
-    .fb-page,
-    .fb-page span,
-    .fb-page iframe {
-      width: 100% !important;
-    }
-
-    .fb-page iframe {
-      border-radius: 24px;
-    }
-
-    iframe {
-      border: none;
-    }
-
-    @media (max-width: 1024px) {
-      .h-\\[820px\\] {
-        height: auto;
-      }
-
+  {/* Responsive: Move styles to CSS or use Tailwind for consistency */}
+</section>
       iframe {
         min-height: 700px;
       }
@@ -497,7 +506,7 @@ const scrollToSection = (id: string) => {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8">
+              <div key={index} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
@@ -522,15 +531,7 @@ const scrollToSection = (id: string) => {
             <p className="text-xl text-gray-600">จองง่าย สะดวก รวดเร็ว</p>
           </div>
 
-          {showSuccess && (
-            <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 flex items-center gap-3">
-              <CheckCircle2 className="w-8 h-8 text-green-500" />
-              <div>
-                <div className="font-bold text-green-800">จองคิวสำเร็จ!</div>
-                <div className="text-green-700">เราจะติดต่อกลับเพื่อยืนยันนัดหมายในเร็วๆนี้ค่ะ</div>
-              </div>
-            </div>
-          )}
+          {showSuccess && <BookingSuccessMessage />}
 
           <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-8 space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -541,7 +542,7 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.ownerName}
                   onChange={(e) => setFormData({...formData, ownerName: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                   placeholder="กรอกชื่อของคุณ"
                 />
               </div>
@@ -552,7 +553,7 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.petName}
                   onChange={(e) => setFormData({...formData, petName: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                   placeholder="กรอกชื่อน้อง"
                 />
               </div>
@@ -565,7 +566,7 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.petType}
                   onChange={(e) => setFormData({...formData, petType: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                 >
                   <option value="">เลือกประเภทสัตว์เลี้ยง</option>
                   <option value="dog">สุนัข</option>
@@ -579,7 +580,7 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.service}
                   onChange={(e) => setFormData({...formData, service: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                 >
                   <option value="">เลือกบริการ</option>
                   <option value="bath">อาบน้ำ - ตัดเล็บ</option>
@@ -597,7 +598,7 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.date}
                   onChange={(e) => setFormData({...formData, date: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                 />
               </div>
               <div>
@@ -606,14 +607,14 @@ const scrollToSection = (id: string) => {
                   required
                   value={formData.time}
                   onChange={(e) => setFormData({...formData, time: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                 >
                   <option value="">เลือกเวลา</option>
-                  <option value="10am">10:00 น.</option>
-                  <option value="12am">12:00 น.</option>
-                  <option value="2pm">14:00 น.</option>
-                  <option value="4pm">16:00 น.</option>
-                  <option value="6pm">18:00 น.</option>
+                  <option value="10:00">10:00 น.</option>
+                  <option value="12:00">12:00 น.</option>
+                  <option value="14:00">14:00 น.</option>
+                  <option value="16:00">16:00 น.</option>
+                  <option value="18:00">18:00 น.</option>
                 </select>
               </div>
             </div>
@@ -625,14 +626,14 @@ const scrollToSection = (id: string) => {
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:outline-none transition-all duration-300 focus:shadow-lg focus:shadow-pink-200"
                 placeholder="08X-XXX-XXXX"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:from-pink-600 hover:to-purple-700 transition shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:from-pink-600 hover:to-purple-700 hover:shadow-xl shadow-lg hover:scale-105 active:scale-95"
             >
               ยืนยันการจอง
             </button>
@@ -657,9 +658,9 @@ const scrollToSection = (id: string) => {
             <div>
               <h3 className="font-bold text-lg mb-4">เมนูหลัก</h3>
               <ul className="space-y-2 text-gray-400">
-                <li><button onClick={() => scrollToSection('services')} className="hover:text-pink-500 transition">บริการ</button></li>
-                <li><button onClick={() => scrollToSection('gallery')} className="hover:text-pink-500 transition">ผลงาน</button></li>
-                <li><button onClick={() => scrollToSection('booking')} className="hover:text-pink-500 transition">จองคิว</button></li>
+                <li><button onClick={() => scrollToSection('services')} className="transition-colors duration-300 hover:text-pink-500">บริการ</button></li>
+                <li><button onClick={() => scrollToSection('gallery')} className="transition-colors duration-300 hover:text-pink-500">ผลงาน</button></li>
+                <li><button onClick={() => scrollToSection('booking')} className="transition-colors duration-300 hover:text-pink-500">จองคิว</button></li>
               </ul>
             </div>
 
@@ -704,7 +705,7 @@ const scrollToSection = (id: string) => {
   <a
     href="https://line.me/ti/p/@Groomingspa"
     target="_blank"
-    className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center shadow-xl hover:scale-110 transition"
+    className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
   >
     <MessageCircle className="text-white w-7 h-7" />
   </a>
@@ -713,7 +714,7 @@ const scrollToSection = (id: string) => {
   <a
     href="https://www.facebook.com/Happygroomingspa/"
     target="_blank"
-    className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center shadow-xl hover:scale-110 transition"
+    className="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -729,7 +730,7 @@ const scrollToSection = (id: string) => {
 <a
   href="https://www.tiktok.com/@happygroomingspacatdog"
   target="_blank"
-  className="w-14 h-14 rounded-full bg-black flex items-center justify-center shadow-xl hover:scale-110 transition"
+  className="w-14 h-14 rounded-full bg-black flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -744,7 +745,7 @@ const scrollToSection = (id: string) => {
   {/* Phone */}
   <a
     href="tel:0961372568"
-    className="w-14 h-14 rounded-full bg-pink-500 flex items-center justify-center shadow-xl hover:scale-110 transition"
+    className="w-14 h-14 rounded-full bg-pink-500 flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
   >
     <Phone className="text-white w-7 h-7" />
   </a>
@@ -753,7 +754,7 @@ const scrollToSection = (id: string) => {
 {/* Admin Button */}
 <button
   onClick={() => setIsAdmin(true)}
-  className="fixed bottom-6 left-6 z-50 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-4 rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 transition-all"
+  className="fixed bottom-6 left-6 z-50 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-4 rounded-full shadow-2xl flex items-center gap-2 transition-all duration-300 hover:scale-110 hover:shadow-3xl active:scale-95"
 >
   <Shield className="w-5 h-5" />
   Admin Dashboard
