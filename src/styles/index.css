@@ -1,16 +1,18 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
-<<<<<<< HEAD
+@import './animations.css';
 
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 /* Global smooth transitions */
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'DM Sans', 'Sarabun', sans-serif;
 }
 
 /* Smooth animations for all interactive elements */
@@ -28,6 +30,7 @@ textarea {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -45,15 +48,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1) !important;
 }
 
-/* Smooth scroll padding for fixed header */
-html {
-  scroll-padding-top: 80px;
-}
-
 /* Enhanced smooth color transitions */
 * {
   @apply transition-colors duration-300;
 }
-=======
-@import './animations.css';
->>>>>>> a5b2fcf30fcdff2a98703ebb9f064f121e279e63
