@@ -1,6 +1,7 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+<<<<<<< HEAD
 
 /* Smooth Scrolling */
 html {
@@ -53,3 +54,6 @@ html {
 * {
   @apply transition-colors duration-300;
 }
+=======
+@import './animations.css';
+>>>>>>> a5b2fcf30fcdff2a98703ebb9f064f121e279e63
